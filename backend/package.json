@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
-    "start":"node server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "bcrypt": "^5.1.1",
+    "env": "^0.0.2",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.0"
   }
 }
