@@ -23,6 +23,16 @@ const loginFields=[
 
 const signupFields=[
     {
+        labelText:"Name",
+        labelFor:"Name",
+        id:"fullName",
+        name:"fullName",
+        type:"text",
+        autoComplete:"Full Name",
+        isRequired:true,
+        placeholder:"Name"   
+    },
+    {
         labelText:"Username",
         labelFor:"username",
         id:"username",
@@ -35,7 +45,7 @@ const signupFields=[
     {
         labelText:"Email address",
         labelFor:"email-address",
-        id:"email-address",
+        id:"email",
         name:"email",
         type:"email",
         autoComplete:"email",
@@ -55,7 +65,7 @@ const signupFields=[
     {
         labelText:"Confirm Password",
         labelFor:"confirm-password",
-        id:"confirm-password",
+        id:"confirmPassword",
         name:"confirm-password",
         type:"password",
         autoComplete:"confirm-password",
