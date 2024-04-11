@@ -3,55 +3,107 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
+import {ToastContainer,toast} from "react-toastify"
+import "react-toastify/dist/ReactToastify.css";
+import { loginRoute } from '../utils/ApiRoutes';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const fields=loginFields;
 let fieldsState = {};
 fields.forEach(field=>fieldsState[field.id]='');
 
+const toastOptions ={
+    position: "bottom-right",
+    autoClose:6000,
+    pauseOnHover: true,
+    draggable:true,
+    theme: "dark",
+  }
+
 export default function Login(){
     const [loginState,setLoginState]=useState(fieldsState);
-
+     //const [loggedIn, setLoggedIn] = useState(false)
+     const navigate = useNavigate();
     const handleChange=(e)=>{
         setLoginState({...loginState,[e.target.id]:e.target.value})
     }
 
     const handleSubmit=(e)=>{
         e.preventDefault();
-        authenticateUser();
+        console.log(loginState)
+        return authenticateUser();
     }
 
     //Handle Login API Integration here
-    const authenticateUser = () =>{
-         
+    const authenticateUser = async() =>{
+        if (!handleValidation()) { // Check for validation errors before sending request
+            return;
+        }
+
+        try {
+            const response = await axios.post(loginRoute,loginState)
+
+            console.log(response)
+            if (response.data.success) {
+                toast.success("Logged In successfully!", toastOptions);
+                 
+                setLoginState(fieldsState); 
+                navigate('/Layout');
+            } else {
+                // Handle registration errors (e.g., show error message)
+                toast.error(response.data.message || "Login failed.", toastOptions);
+            }
+        } catch (error) {
+            console.error("Error while trying to log in into the account:", error);
+            toast.error("An error occurred. Please try again later.", toastOptions);
+        }  
+      
     }
 
+
+    const handleValidation = () => {
+        const { password,username} = loginState;
+        if (password === "") {
+          toast.error(
+            "Email and Password is required",
+            toastOptions
+          );
+          return false;
+        }
+        else if (username.length === "") {
+          toast.error(
+            "Email and Password is required",
+            toastOptions
+          );
+          return false;
+          }
+        return true;
+      };    
+
     return(
-    
-        <form className=" mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="-space-y-px">
-            {
-                fields.map(field=>
-                        <Input
-                            key={field.id}
-                            handleChange={handleChange}
-                            value={loginState[field.id]}
-                            labelText={field.labelText}
-                            labelFor={field.labelFor}
-                            id={field.id}
-                            name={field.name}
-                            type={field.type}
-                            isRequired={field.isRequired}
-                            placeholder={field.placeholder}
-                    />
-                
-                )
-            }
-        </div>
-
-        <FormExtra/>
-        <FormAction handleSubmit={handleSubmit} text="Login"/>
-
-      </form>
+          <form className=" space-y-6 " onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                  {fields.map((field) => (
+                      <Input
+                          key={field.id}
+                          handleChange={handleChange}
+                          value={loginState[field.id]}
+                          labelText={field.labelText}
+                          labelFor={field.labelFor}
+                          id={field.id}
+                          name={field.name}
+                          type={field.type}
+                          isRequired={field.isRequired}
+                          placeholder={field.placeholder}
+                      />
+                  ))}
+              </div>
+  
+              <FormExtra />
+              <FormAction handleSubmit={handleSubmit} text="Login" />
+              <ToastContainer />
+          </form>
+       
     )
 }
