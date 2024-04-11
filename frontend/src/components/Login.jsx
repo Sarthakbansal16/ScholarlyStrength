@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from '../utils/ApiRoutes';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const fields=loginFields;
 let fieldsState = {};
@@ -44,15 +45,18 @@ export default function Login(){
         try {
             const response = await axios.post(loginRoute,loginState)
 
-            console.log(response)
+            //console.log(response.data)
             if (response.data.success) {
-                toast.success("Logged In successfully!", toastOptions);
-                 
-                setLoginState(fieldsState); 
-                navigate('/Layout');
+                const { accessToken, refreshToken } = response.data.data;
+
+                // Set cookies for accessToken and refreshToken
+                Cookies.set('accessToken', accessToken, { expires: 7, sameSite: 'Lax', secure: true });
+                Cookies.set('refreshToken', refreshToken, { expires: 14, sameSite: 'Lax', secure: true });
+
+                toast.success('Logged in successfully!', toastOptions);
+                navigate('/Layout'); // Navigate to the appropriate page
             } else {
-                // Handle registration errors (e.g., show error message)
-                toast.error(response.data.message || "Login failed.", toastOptions);
+                toast.error(response.data.message || 'Login failed.', toastOptions);
             }
         } catch (error) {
             console.error("Error while trying to log in into the account:", error);
